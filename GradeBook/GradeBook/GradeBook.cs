@@ -10,7 +10,8 @@ namespace Grades
     {
         public GradeBook()
         {
-            grades = new List<float>();
+            grades = new List<float>(); //floats are dumb, us ints for whole numbers or doubles for decimal
+            _name = "Empty";
         }
 
         public GradeStatistics ComputeStatistics()
@@ -28,13 +29,38 @@ namespace Grades
             return stats;
         }
 
-        public void AddGrade(float grade)
+        public void AddGrade(float grade) //functions without a return statement need to be defined with the void keyword
         {
             grades.Add(grade);
         }
 
-        public string Name;
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                if (!String.IsNullOrEmpty(value))
+                {
+                    if(_name != value)
+                    {
+                        NameChangedEventArgs args = new NameChangedEventArgs();
+                        args.ExistingName = _name;
+                        args.NewName = value;
+                    
 
-        private List<float> grades;
+                        NameChanged(this, args);
+                    }
+
+                    _name = value;
+                }
+            }
+        }
+
+        public event NameChangedDelegate NameChanged; //keyword event forces subscriptions to be assigned as += or -=, prevents = null
+        private string _name;
+        private List<float> grades; //List is a resizable array (like js arrays)
     }
 }
