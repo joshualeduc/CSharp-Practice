@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Grades
 {
-    public class GradeBook
+    public class GradeBook : GradeTracker
     {
         public GradeBook()
         {
@@ -15,7 +16,7 @@ namespace Grades
             _name = "Empty";
         }
 
-        public GradeStatistics ComputeStatistics()
+        public override GradeStatistics ComputeStatistics() //(virtual keyword changed to override since we are now inheriting from GradeTracker)virtual keyword needed for polymorphism ie ThrowAwayGradeBook class can use this method, must be paired with override
         {
             GradeStatistics stats = new GradeStatistics();
 
@@ -30,7 +31,7 @@ namespace Grades
             return stats;
         }
 
-        public void WriteGrades(TextWriter destination) //(parameter originally @out, @ is used to write a parament using a c# keyword @out, @class, etc
+        public override void WriteGrades(TextWriter destination) //(parameter originally @out, @ is used to write a parament using a c# keyword @out, @class, etc
         {
             for (int i = 0; i < grades.Count; i++) //.Count is C#'s .length for arrays
             {
@@ -38,41 +39,17 @@ namespace Grades
             }
         }
 
-        public void AddGrade(float grade) //functions without a return statement need to be defined with the void keyword
+        public override void AddGrade(float grade) //functions without a return statement need to be defined with the void keyword
         {
             grades.Add(grade);
         }
 
-        public string Name
+        public override IEnumerator GetEnumerator()
         {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                if (String.IsNullOrEmpty(value))
-                {
-                    throw new ArgumentException("Name cannot be null or empty"); //Overriding basic error message with my custom string
-                }
-
-                if (_name != value)
-                {
-                    NameChangedEventArgs args = new NameChangedEventArgs();
-                    args.ExistingName = _name;
-                    args.NewName = value;
-
-
-                    NameChanged(this, args);
-                }
-
-                _name = value;
-
-            }
+            return grades.GetEnumerator();
         }
 
-        public event NameChangedDelegate NameChanged; //keyword event forces subscriptions to be assigned as += or -=, prevents = null
-        private string _name;
-        private List<float> grades; //List is a resizable array (like js arrays)
+
+        protected List<float> grades; //List is a resizable array (like js arrays) --- protected allows access from the class its written in or an inherited class 
     }
 }
