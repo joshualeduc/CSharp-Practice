@@ -13,8 +13,23 @@ namespace Acme.Biz
     /// </summary>
     public class Product
     {
+        //const vs readonly
+        //    const
+        //        - compile-time constant
+        //        - assigned to an expression evaluated at compile time
+        //        - assigned on declaration
+        //        - only number, boolean, or string
+        //        - always static
+        //    readonly
+        //        - runtime constant
+        //        - assigned to any valid expression at runtime
+        //        - assigned on declaration or constructor
+        //        - any data type
+        //        - optionally static
+        //Generally constants are for simple data types that will never change, while read-only is used for defining a field that comes from a file, table, or code but then should never be changed
+
         public const double InchesPerMeter = 39.37;
-        public readonly
+        public readonly decimal MinimumPrice;
 
         #region Constructors
         public Product()
@@ -22,6 +37,7 @@ namespace Acme.Biz
             Console.WriteLine("Product instance created");
             //Initialize an object in the constructor when its always needed by your class
             //this.ProductVendor = new Vendor();
+            this.MinimumPrice = .96m;
         }
 
         public Product(int productId,
@@ -31,6 +47,10 @@ namespace Acme.Biz
             this.ProductId = productId;
             this.ProductName = productName;
             this.Description = description;
+            if (ProductName.StartsWith("Bulk"))
+            {
+                this.MinimumPrice = 9.99m;
+            }
 
             Console.WriteLine($"Product instance has a name: {ProductName}");
         }
