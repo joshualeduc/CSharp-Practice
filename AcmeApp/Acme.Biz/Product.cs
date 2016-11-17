@@ -13,6 +13,9 @@ namespace Acme.Biz
     /// </summary>
     public class Product
     {
+        public const double InchesPerMeter = 39.37;
+        public readonly
+
         #region Constructors
         public Product()
         {
@@ -34,6 +37,15 @@ namespace Acme.Biz
         #endregion
 
         #region Properties
+        //Backing Fields(the private variables) have default initialization values if none are set - int 0, bool false, string/object null, dateType 1/1/0001, etc
+        private DateTime? availabilityDate; //nullable type, the question mark helps check for null value vs default value
+
+        public DateTime? AvailabilityDate
+        {
+            get { return availabilityDate; }
+            set { availabilityDate = value; }
+        }
+
         private string productName;
 
         public string ProductName
@@ -85,7 +97,8 @@ namespace Acme.Biz
                 this.ProductName, "sales@abc.com");
 
             var result = LogAction("Saying hello again"); //doesn't need class name with the new 'using static' feature
-            return $"Hello {ProductName} ({ProductId}): {Description}";
+            return $"Hello {ProductName} ({ProductId}): {Description} Available on: {AvailabilityDate?.ToShortDateString()}"; 
+            //the question mark is needed here for ToShortDateString to work - C#5 would need if (AvailabilityDate.HasValue) instead?
         }
     }
 }
