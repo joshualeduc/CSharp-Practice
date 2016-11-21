@@ -38,6 +38,7 @@ namespace Acme.Biz
             //Initialize an object in the constructor when its always needed by your class
             //this.ProductVendor = new Vendor();
             this.MinimumPrice = .96m;
+            this.Category = "Tools";
         }
 
         public Product(int productId,
@@ -58,6 +59,14 @@ namespace Acme.Biz
 
         #region Properties
         //Backing Fields(the private variables) have default initialization values if none are set - int 0, bool false, string/object null, dateType 1/1/0001, etc
+
+        //Typical uses for a getter:
+        //- Check user's credentials
+        //- Check application state
+        //- formate the returned value
+        //- log
+        //- lazy loading
+        //Other additional uses for a setter - validate incoming value, format/convert/cleanup
         private DateTime? availabilityDate; //nullable type, the question mark helps check for null value vs default value
 
         public DateTime? AvailabilityDate
@@ -70,8 +79,24 @@ namespace Acme.Biz
 
         public string ProductName
         {
-            get { return productName; }
-            set { productName = value; }
+            get {
+                var formattedValue = productName?.Trim(); //if null, then null. if not, then dot
+                return formattedValue;
+            }
+            set {
+                if(value.Length < 3)
+                {
+                    ValidationMessage = "Product Name must be at least 3 characters";
+                }
+                else if (value.Length > 20)
+                {
+                    ValidationMessage = "Product Name cannot be more than 20 characters";
+                }
+                else
+                {
+                    productName = value;
+                }
+            }
         }
 
         private string description;
@@ -103,6 +128,14 @@ namespace Acme.Biz
             }
             set { productVendor = value; }
         }
+
+        internal string Category { get; set; } //change had to be made in assemblyInfo so that our tests could access Category
+        public int SequenceNumber { get; set; } = 1;
+
+        public string ProductCode => $"{this.Category}-{this.SequenceNumber}";
+
+
+        public string ValidationMessage { get; private set; }
 
         #endregion
 
