@@ -17,6 +17,72 @@ namespace Acme.Biz
         public string Email { get; set; }
 
         /// <summary>
+        /// Sends a product order to the vendor.
+        /// </summary>
+        /// <param name="product">Product to order.</param>
+        /// <param name="quantity">Quantity of the product to order.</param>
+        /// <returns></returns>
+        public OperationResult PlaceOrder(Product product, int quantity)
+        {
+            return PlaceOrder(product, quantity, null, null); //This is called method chaining, where all the code is placed in the overloaded function with the most parameters
+        }
+
+        /// <summary>
+        /// Sends a product order to the vendor.
+        /// </summary>
+        /// <param name="product">Product to order.</param>
+        /// <param name="quantity">Quantity of the product to order.</param>
+        /// <param name="deliveryBy">Requested delivery date.</param>
+        /// <returns></returns>
+        public OperationResult PlaceOrder(Product product, int quantity, DateTimeOffset? deliveryBy)
+        {
+            return PlaceOrder(product, quantity, deliveryBy, null);
+        }
+
+        /// <summary>
+        /// Sends a product order to the vendor.
+        /// </summary>
+        /// <param name="product">Product to order.</param>
+        /// <param name="quantity">Quantity of the product to order.</param>
+        /// <param name="deliveryBy">Requested delivery date.</param>
+        /// <param name="instructions">Delivery instructions.</param>
+        /// <returns></returns>
+        public OperationResult PlaceOrder(Product product, int quantity, DateTimeOffset? deliveryBy, string instructions)
+        {
+            if (product == null)
+                throw new ArgumentNullException(nameof(product));
+            if (quantity <= 0)
+                throw new ArgumentOutOfRangeException(nameof(quantity));
+            if (deliveryBy <= DateTimeOffset.Now)
+                throw new ArgumentOutOfRangeException(nameof(deliveryBy));
+
+            var success = false;
+
+            var orderText = $"Order from Acme, Inc{System.Environment.NewLine}" +
+                            $"Product: {product.ProductCode}{System.Environment.NewLine}" +
+                            $"Quantity: {quantity}";
+            if (deliveryBy.HasValue)
+            {
+                orderText += $"{System.Environment.NewLine}" +
+                             $"Deliver By: {deliveryBy.Value.ToString("d")}";
+            }
+            if (!String.IsNullOrWhiteSpace(instructions))
+            {
+                orderText += $"{System.Environment.NewLine}" +
+                             $"Instructions: {instructions}";
+            }
+
+            var emailService = new EmailService();
+            var confirmation = emailService.SendMessage("New Order", orderText, this.Email);
+            if (confirmation.StartsWith("Message sent:"))
+            {
+                success = true;
+            }
+            var operationResult = new OperationResult(success, orderText);
+            return operationResult;
+        }
+
+        /// <summary>
         /// Sends an email to welcome a new vendor.
         /// </summary>
         /// <returns></returns>
@@ -24,9 +90,7 @@ namespace Acme.Biz
         {
             var emailService = new EmailService();
             var subject = ("Hello " + this.CompanyName).Trim();
-            var confirmation = emailService.SendMessage(subject,
-                                                        message, 
-                                                        this.Email);
+            var confirmation = emailService.SendMessage(subject, message, this.Email);
             return confirmation;
         }
     }

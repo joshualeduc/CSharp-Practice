@@ -75,6 +75,8 @@ namespace Acme.Biz
             set { availabilityDate = value; }
         }
 
+        public decimal Cost { get; set; }
+
         private string productName;
 
         public string ProductName
@@ -139,6 +141,14 @@ namespace Acme.Biz
 
         #endregion
 
+        /// <summary>
+        /// Calculates the suggested retail price
+        /// </summary>
+        /// <param name="markupPercent">Percent used to mark up the cost</param>
+        /// <returns></returns>
+        public decimal CalculateSuggestedPrice(decimal markupPercent) =>
+            this.Cost + (this.Cost * markupPercent / 100);
+
         public string SayHello()
         {
             //initializing objects inside a method is used when that method is the only thing that needs the class
@@ -146,12 +156,16 @@ namespace Acme.Biz
             //vendor.SendWelcomeEmail("Message from Product Class");
 
             var emailService = new EmailService();
-            var confirmation = emailService.SendMessage("New Product",
-                this.ProductName, "sales@abc.com");
+            var confirmation = emailService.SendMessage("New Product", this.ProductName, "sales@abc.com");
 
             var result = LogAction("Saying hello again"); //doesn't need class name with the new 'using static' feature
             return $"Hello {ProductName} ({ProductId}): {Description} Available on: {AvailabilityDate?.ToShortDateString()}"; 
             //the question mark is needed here for ToShortDateString to work - C#5 would need if (AvailabilityDate.HasValue) instead?
+        }
+
+        public override string ToString() //This override is allowing us to dictate what is being shown when we debug unit tests involving this class
+        {
+            return $"{this.ProductName} ({this.productId})";
         }
     }
 }
