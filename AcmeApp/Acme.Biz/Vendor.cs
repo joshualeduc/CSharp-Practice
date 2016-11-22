@@ -12,10 +12,13 @@ namespace Acme.Biz
     /// </summary>
     public class Vendor 
     {
+        public enum IncludeAddress { Yes, No };
+        public enum SendCopy { Yes, No };
         public int VendorId { get; set; }
         public string CompanyName { get; set; }
         public string Email { get; set; }
 
+        //Instead of using these overload functions, a better approach would be to use default values in our function with 4 parameters.
         /// <summary>
         /// Sends a product order to the vendor.
         /// </summary>
@@ -46,7 +49,13 @@ namespace Acme.Biz
         /// <param name="quantity">Quantity of the product to order.</param>
         /// <param name="deliveryBy">Requested delivery date.</param>
         /// <param name="instructions">Delivery instructions.</param>
-        /// <returns></returns>
+        /// <returns></returns> 
+        //A good tip with parameters, list them in this order:
+        //- Acted upon or key to the operation
+        //- Required for the operation
+        //- Flags
+        //- Optional parameters
+
         public OperationResult PlaceOrder(Product product, int quantity, DateTimeOffset? deliveryBy, string instructions)
         {
             if (product == null)
@@ -79,6 +88,34 @@ namespace Acme.Biz
                 success = true;
             }
             var operationResult = new OperationResult(success, orderText);
+            return operationResult;
+        }
+
+        /// <summary>
+        /// Sends a product order to the vendor.
+        /// </summary>
+        /// <param name="product">Product to order</param>
+        /// <param name="quantity">Quantity of the product to order.</param>
+        /// <param name="includeAddress">True to include the shipping address.</param>
+        /// <param name="sendCopy">True to send a copy of the email to the current</param>
+        /// <returns>Success flag and order text</returns>
+        //public OperationResult PlaceOrder(Product product, int quantity, bool includeAddress, bool sendCopy)
+        //{
+        //    var orderText = "Test";
+        //    if (includeAddress) orderText += " With Address";
+        //    if (sendCopy) orderText += " With Copy";
+
+        //    var operationResult = new OperationResult(true, orderText);
+        //    return operationResult;
+        //}
+        //example using enums instead of booleans
+        public OperationResult PlaceOrder(Product product, int quantity, IncludeAddress includeAddress, SendCopy sendCopy)
+        {
+            var orderText = "Test";
+            if (includeAddress == IncludeAddress.Yes) orderText += " With Address";
+            if (sendCopy == SendCopy.Yes) orderText += " With Copy";
+
+            var operationResult = new OperationResult(true, orderText);
             return operationResult;
         }
 

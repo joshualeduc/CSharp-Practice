@@ -101,5 +101,23 @@ namespace Acme.Biz.Tests
             Assert.AreEqual(expected.Success, actual.Success);
             Assert.AreEqual(expected.Message, actual.Message);
         }
+
+        [TestMethod()]
+        public void PlaceOrderTest_WithAddress()
+        {
+            //Arrange
+            var vendor = new Vendor();
+            var product = new Product(1, "Saw", "");
+            var expected = new OperationResult(true, "Test With Address");
+
+            //Act
+            //var actual = vendor.PlaceOrder(product, 12, 
+            //                               includeAddress: true,
+            //                               sendCopy: false); //unnamed parameters need to be listed first
+            var actual = vendor.PlaceOrder(product, 12, Vendor.IncludeAddress.Yes, Vendor.SendCopy.No);//example using enums instead of booleans
+            //Assert
+            Assert.AreEqual(expected.Success, actual.Success);
+            Assert.AreEqual(expected.Message, actual.Message);
+        }
     }
 }
