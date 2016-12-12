@@ -119,6 +119,42 @@ namespace Acme.Biz
             return operationResult;
         }
 
+        public override string ToString()
+        {
+            string vendorInfo = $"Vendor: {this.CompanyName}";
+            if (!String.IsNullOrWhiteSpace(vendorInfo))
+            {
+                //Strings are an immutable reference type that acts as a value type. These methods are all making a copy of the original string.
+                string result;
+                result = vendorInfo.ToLower();
+                result = vendorInfo.ToUpper();
+                result = vendorInfo.Replace("Vendor", "Supplier");
+
+                var length = vendorInfo.Length; //Length is a property, not a method
+                var index = vendorInfo.IndexOf(":");
+                var begins = vendorInfo.StartsWith("Vendor");
+            }
+            return vendorInfo;
+        }
+
+        public string PrepareDirections()
+        {
+            var directions = @"Insert \r\n to define a new line"; // \r\n will create a return, adding @ in front of the string will print the verbatim string (no return)
+            return directions; 
+        }
+
+        //3 ways to make a new line in C#
+        public string PrepareDirectionsOnTwoLines()
+        {
+            var directions = "First do this" + Environment.NewLine + "Then do that";
+            var directions2 = "First do this\r\nThen do that";
+            var directions3 = @"First do this
+Then do that"; //tabs to align the code would put tabs in the string this way.
+            return directions;
+        }
+
+
+
         /// <summary>
         /// Sends an email to welcome a new vendor.
         /// </summary>
