@@ -11,11 +11,14 @@ namespace TaskManager
         public TaskList()
         {
             tasks = new List<string>();
+            running = true;
         }
 
         protected List<string> tasks;
 
         public string task { get; set; }
+
+        public bool running { get; set; }
 
         public void add(string taskName)
         {
@@ -36,6 +39,11 @@ namespace TaskManager
             {
                 Console.WriteLine($"{i + 1}: {tasks[i]}");
             }
+        }
+
+        public void exit()
+        {
+            running = false;
         }
 
         public void commandParser(string userInput)
@@ -64,6 +72,9 @@ namespace TaskManager
                     break;
                 case "ls":
                     ls();
+                    break;
+                case "exit":
+                    exit();
                     break;
                 default:
                     Console.WriteLine("Please use the commands 'add', 'done', or 'ls'.");

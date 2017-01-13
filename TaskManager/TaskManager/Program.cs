@@ -11,13 +11,12 @@ namespace TaskManager
         static void Main(string[] args)
         {
             TaskList workingList = new TaskList();
-            bool running = true;
             Greet(workingList);
             do
             {
                 ListenForCommands(workingList);
-            } while (running);
-            //ExitProgram();
+            } while (workingList.running);
+            ExitProgram();
         }
 
         static void Greet(TaskList taskList)
@@ -31,9 +30,11 @@ namespace TaskManager
             taskList.commandParser(userInput);
         }
 
-        //static void ExitProgram()
-        //{
-
-        //}
+        static void ExitProgram()
+        {
+            Console.WriteLine("See you next time.");
+            System.Threading.Thread.Sleep(2500);
+            
+        }
     }
 }
