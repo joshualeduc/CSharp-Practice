@@ -26,10 +26,16 @@ namespace TaskManager
             Console.WriteLine($"Added {taskName}");
         }
 
-        public void done(int index)
+        public void done(int input)
         {
-            string taskText = tasks[index - 1];
-            tasks.RemoveAt(index - 1);
+            var index = input - 1;
+            if(index > tasks.Count || index < 0) {
+                Console.WriteLine($"Please type the number of an existing task.");
+                return;
+            }
+
+            string taskText = tasks[index];
+            tasks.RemoveAt(index);
             Console.WriteLine($"Deleted: {taskText}");
         }
 
