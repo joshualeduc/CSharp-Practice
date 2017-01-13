@@ -15,9 +15,9 @@ namespace TaskManager
             Greet(workingList);
             do
             {
-                ListenForCommands();
+                ListenForCommands(workingList);
             } while (running);
-            ExitProgram();
+            //ExitProgram();
         }
 
         static void Greet(TaskList taskList)
@@ -25,14 +25,15 @@ namespace TaskManager
             Console.WriteLine("Hello, welcome to your task list.");
         }
 
-        static void ListenForCommands()
+        static void ListenForCommands(TaskList taskList)
         {
-
+            string userInput = Console.ReadLine();
+            taskList.commandParser(userInput);
         }
 
-        static void ExitProgram()
-        {
+        //static void ExitProgram()
+        //{
 
-        }
+        //}
     }
 }

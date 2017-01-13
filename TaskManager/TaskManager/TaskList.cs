@@ -10,35 +10,65 @@ namespace TaskManager
     {
         public TaskList()
         {
-            tasks = new Dictionary<int, string>();
+            tasks = new List<string>();
         }
 
-        protected Dictionary<int, string> tasks;
+        protected List<string> tasks;
 
         public string task { get; set; }
 
         public void add(string taskName)
         {
-            int newKey = tasks.Count + 1;
-            tasks.Add(newKey, taskName);
+            tasks.Add(taskName);
+            Console.WriteLine($"Added {taskName}");
         }
 
-        public void done(int taskKey)
+        public void done(int index)
         {
-            tasks.Remove(taskKey);
+            string taskText = tasks[index - 1];
+            tasks.RemoveAt(index - 1);
+            Console.WriteLine($"Deleted: {taskText}");
         }
 
         public void ls()
         {
-            foreach (KeyValuePair<int, string>task in tasks)
+            for(int i = 0; i < tasks.Count; i++)
             {
-                Console.WriteLine($"{task.Key}: {task.Value}");
+                Console.WriteLine($"{i + 1}: {tasks[i]}");
             }
         }
 
         public void commandParser(string userInput)
         {
+            int i = userInput.IndexOf(" ");
+            string command;
+            string input;
+            if(i != -1)
+            {
+                command = userInput.Substring(0, i);
+                input = userInput.Substring(i + 1);
+            }
+            else
+            {
+                command = userInput;
+                input = String.Empty;
+            }
 
+            switch (command)
+            {
+                case "add":
+                    add(input);
+                    break;
+                case "done":
+                    done(Int32.Parse(input));
+                    break;
+                case "ls":
+                    ls();
+                    break;
+                default:
+                    Console.WriteLine("Please use the commands 'add', 'done', or 'ls'.");
+                    break;
+            }
         }
     }
 }
