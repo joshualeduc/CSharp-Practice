@@ -20,23 +20,47 @@ namespace TaskManager
 
         public bool running { get; set; }
 
+        public string FormattedList
+        {
+            get
+            {
+                string myList = String.Empty;
+                foreach (string task in tasks)
+                {
+                    myList += task + Environment.NewLine;
+                }
+                return myList;
+            }
+        }
+
+        public IEnumerable<string> initialList
+        {
+            set
+            {
+                foreach (string item in value)
+                {
+                    tasks.Add(item);
+                }
+            }
+        }
+
         public void add(string taskName)
         {
             tasks.Add(taskName);
-            Console.WriteLine($"Added {taskName}");
+            Console.WriteLine($"Added {taskName}{Environment.NewLine}");
         }
 
         public void done(int input)
         {
             var index = input - 1;
             if(index > tasks.Count || index < 0) {
-                Console.WriteLine($"Please type the number of an existing task.");
+                Console.WriteLine($"Please type the number of an existing task.{Environment.NewLine}");
                 return;
             }
 
             string taskText = tasks[index];
             tasks.RemoveAt(index);
-            Console.WriteLine($"Deleted: {taskText}");
+            Console.WriteLine($"Deleted: {taskText}{Environment.NewLine}");
         }
 
         public void ls()
@@ -45,6 +69,7 @@ namespace TaskManager
             {
                 Console.WriteLine($"{i + 1}: {tasks[i]}");
             }
+            Console.WriteLine($"");
         }
 
         public void exit()

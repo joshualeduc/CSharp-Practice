@@ -8,6 +8,7 @@ namespace TaskManager
 {
     class Program
     {
+        static string myPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "todo.txt");
         static void Main(string[] args)
         {
             TaskList workingList = new TaskList();
@@ -16,12 +17,13 @@ namespace TaskManager
             {
                 ListenForCommands(workingList);
             } while (workingList.running);
-            ExitProgram();
+            ExitProgram(workingList);
         }
 
         static void Greet(TaskList taskList)
         {
             Console.WriteLine("Hello, welcome to your task list.");
+            taskList.initialList = System.IO.File.ReadLines(myPath);
         }
 
         static void ListenForCommands(TaskList taskList)
@@ -30,11 +32,11 @@ namespace TaskManager
             taskList.commandParser(userInput);
         }
 
-        static void ExitProgram()
+        static void ExitProgram(TaskList taskList)
         {
             Console.WriteLine("See you next time.");
-            System.Threading.Thread.Sleep(2500);
-            
+            System.IO.File.WriteAllText(myPath, taskList.FormattedList);
+            System.Threading.Thread.Sleep(1500);
         }
     }
 }
