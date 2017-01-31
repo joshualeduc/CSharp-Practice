@@ -14,11 +14,11 @@ namespace TaskManager
             running = true;
         }
 
+        public bool running;
+
         protected List<string> tasks;
 
-        public string task { get; set; }
-
-        public bool running { get; set; }
+        private string task;
 
         public string FormattedList
         {
@@ -33,7 +33,7 @@ namespace TaskManager
             }
         }
 
-        public IEnumerable<string> initialList
+        public IEnumerable<string> InitialList
         {
             set
             {
@@ -44,53 +44,23 @@ namespace TaskManager
             }
         }
 
-        public void add(string taskName)
-        {
-            tasks.Add(taskName);
-            Console.WriteLine($"Added {taskName}{Environment.NewLine}");
-        }
-
-        public void done(int input)
-        {
-            var index = input - 1;
-            if(index > tasks.Count || index < 0) {
-                Console.WriteLine($"Please type the number of an existing task.{Environment.NewLine}");
-                return;
-            }
-
-            string taskText = tasks[index];
-            tasks.RemoveAt(index);
-            Console.WriteLine($"Deleted: {taskText}{Environment.NewLine}");
-        }
-
-        public void ls()
-        {
-            for(int i = 0; i < tasks.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}: {tasks[i]}");
-            }
-            Console.WriteLine($"");
-        }
-
-        public void exit()
-        {
-            running = false;
-        }
-
         public void commandParser(string userInput)
         {
             int i = userInput.IndexOf(" ");
             string command;
             string input;
-            if(i != -1)
+            string[] splitInput;
+            if (i != -1)
             {
                 command = userInput.Substring(0, i);
                 input = userInput.Substring(i + 1);
+                splitInput = input.Split(null);
             }
             else
             {
                 command = userInput;
-                input = String.Empty;
+                input = null;
+                splitInput = null;
             }
 
             switch (command)
@@ -102,15 +72,75 @@ namespace TaskManager
                     done(Int32.Parse(input));
                     break;
                 case "ls":
-                    ls();
+                    ls(splitInput);
                     break;
                 case "exit":
                     exit();
                     break;
                 default:
-                    Console.WriteLine("Please use the commands 'add', 'done', or 'ls'.");
+                    Console.WriteLine("Please use the commands 'add', 'pri', 'done', 'ls', or 'exit'.");
                     break;
             }
+        }
+
+        private void add(string taskName)
+        {
+            tasks.Add(taskName);
+            Console.WriteLine($"Added {taskName}");
+        }
+
+        private void done(int input)
+        {
+            var index = input - 1;
+            if(index > tasks.Count || index < 0) {
+                Console.WriteLine($"Please type the number of an existing task.");
+                return;
+            }
+
+            string taskText = tasks[index];
+            tasks.RemoveAt(index);
+            Console.WriteLine($"Deleted: {taskText}");
+        }
+
+        private void ls(string[] searchTerms)
+        {
+            List<string> listToRead = new List<string>(tasks);
+            if (searchTerms != null)
+            {
+                foreach (string term in searchTerms)
+                {
+                    listToRead = filterList(listToRead, term);
+                }
+
+            }
+            readList(listToRead);
+            Console.WriteLine($"What would you like to do next?");
+        }
+
+        private void exit()
+        {
+            running = false;
+        }
+
+        private void readList(List<string> myList)
+        {
+            for (int i = 0; i < myList.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}: {myList[i]}");
+            }
+        }
+
+        private List<string> filterList(List<string> listToFilter, string searchTerm)
+        {
+            List<string> filteredList = new List<string>();
+            foreach (string item in listToFilter)
+            {
+                if (item.Contains(searchTerm))
+                {
+                    filteredList.Add(item);
+                }
+            }
+            return filteredList;
         }
     }
 }

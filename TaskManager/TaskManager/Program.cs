@@ -23,7 +23,7 @@ namespace TaskManager
         static void Greet(TaskList taskList)
         {
             Console.WriteLine("Hello, welcome to your task list.");
-            taskList.initialList = System.IO.File.ReadLines(myPath);
+            taskList.InitialList = System.IO.File.ReadLines(myPath);
         }
 
         static void ListenForCommands(TaskList taskList)
