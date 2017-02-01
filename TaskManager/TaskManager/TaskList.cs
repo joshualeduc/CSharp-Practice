@@ -110,14 +110,17 @@ namespace TaskManager
                 case 'a':
                 case 'A':
                     tasks[taskKey] = $"[A] {tasks[taskKey]}";
+                    Console.WriteLine($"High importance added to: {tasks[taskKey]}");
                     break;
                 case 'b':
                 case 'B':
                     tasks[taskKey] = $"[B] {tasks[taskKey]}";
+                    Console.WriteLine($"Medium importance added to: {tasks[taskKey]}");
                     break;
                 case 'c':
                 case 'C':
                     tasks[taskKey] = $"[C] {tasks[taskKey]}";
+                    Console.WriteLine($"Low importance added to: {tasks[taskKey]}");
                     break;
                 default:
                     Console.WriteLine("Please type 'A' 'B' or 'C' then space at the beginning of your task.");
