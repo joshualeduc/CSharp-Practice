@@ -10,24 +10,22 @@ namespace TaskManager
     {
         public TaskList()
         {
-            tasks = new List<string>();
+            tasks = new Dictionary<int, string>();
             running = true;
         }
 
         public bool running;
 
-        protected List<string> tasks;
-
-        private string task;
+        protected Dictionary<int, string> tasks;
 
         public string FormattedList
         {
             get
             {
                 string myList = String.Empty;
-                foreach (string task in tasks)
+                foreach (var task in tasks)
                 {
-                    myList += task + Environment.NewLine;
+                    myList += task.Value + Environment.NewLine;
                 }
                 return myList;
             }
@@ -37,9 +35,11 @@ namespace TaskManager
         {
             set
             {
+                int counter = 1;
                 foreach (string item in value)
                 {
-                    tasks.Add(item);
+                    tasks.Add(counter, item);
+                    counter++;
                 }
             }
         }
@@ -68,6 +68,9 @@ namespace TaskManager
                 case "add":
                     add(input);
                     break;
+                case "pri":
+                    prioritize(input);
+                    break;
                 case "done":
                     done(Int32.Parse(input));
                     break;
@@ -85,31 +88,64 @@ namespace TaskManager
 
         private void add(string taskName)
         {
-            tasks.Add(taskName);
+            for(int i = 1; i < 1000; i++)
+            {
+                if (!tasks.ContainsKey(i))
+                {
+                    tasks.Add(i, taskName);
+                    break;
+                }
+            }
             Console.WriteLine($"Added {taskName}");
+        }
+
+        private void prioritize(string userInput)
+        {
+            int i = userInput.IndexOf(" ");
+            int taskKey = Int32.Parse(userInput.Substring(0, i));
+            char priority = userInput[i+1];
+
+            switch(priority)
+            {
+                case 'a':
+                case 'A':
+                    tasks[taskKey] = $"[A] {tasks[taskKey]}";
+                    break;
+                case 'b':
+                case 'B':
+                    tasks[taskKey] = $"[B] {tasks[taskKey]}";
+                    break;
+                case 'c':
+                case 'C':
+                    tasks[taskKey] = $"[C] {tasks[taskKey]}";
+                    break;
+                default:
+                    Console.WriteLine("Please type 'A' 'B' or 'C' then space at the beginning of your task.");
+                    break;
+            }
         }
 
         private void done(int input)
         {
-            var index = input - 1;
-            if(index > tasks.Count || index < 0) {
+            if(!tasks.ContainsKey(input)) 
+            {
                 Console.WriteLine($"Please type the number of an existing task.");
                 return;
             }
 
-            string taskText = tasks[index];
-            tasks.RemoveAt(index);
+            string taskText = tasks[input];
+            tasks.Remove(input);
             Console.WriteLine($"Deleted: {taskText}");
         }
 
         private void ls(string[] searchTerms)
         {
-            List<string> listToRead = new List<string>(tasks);
+            Dictionary<int, string> listToRead = tasks;
             if (searchTerms != null)
             {
                 foreach (string term in searchTerms)
                 {
-                    listToRead = filterList(listToRead, term);
+                    listToRead = listToRead.Where(task => task.Value.Contains(term)).ToDictionary(i => i.Key, i => i.Value);
                 }
 
             }
@@ -122,25 +158,12 @@ namespace TaskManager
             running = false;
         }
 
-        private void readList(List<string> myList)
+        private void readList(Dictionary<int, string> myList)
         {
-            for (int i = 0; i < myList.Count; i++)
+            foreach (var task in myList.OrderBy(key=> key.Value))
             {
-                Console.WriteLine($"{i + 1}: {myList[i]}");
+                Console.WriteLine($"{task.Key}: {task.Value}");
             }
-        }
-
-        private List<string> filterList(List<string> listToFilter, string searchTerm)
-        {
-            List<string> filteredList = new List<string>();
-            foreach (string item in listToFilter)
-            {
-                if (item.Contains(searchTerm))
-                {
-                    filteredList.Add(item);
-                }
-            }
-            return filteredList;
         }
     }
 }
