@@ -50,6 +50,7 @@ namespace TaskManager
             string command;
             string input;
             string[] splitInput;
+
             if (i != -1)
             {
                 command = userInput.Substring(0, i);
@@ -103,7 +104,12 @@ namespace TaskManager
         {
             int i = userInput.IndexOf(" ");
             int taskKey = Int32.Parse(userInput.Substring(0, i));
-            char priority = userInput[i+1];
+            char priority = userInput[i + 1];
+
+            if (tasks[taskKey].StartsWith("[A]") || tasks[taskKey].StartsWith("[B]") || tasks[taskKey].StartsWith("[C]"))
+            {
+                tasks[taskKey] = tasks[taskKey].Substring(4);
+            }
 
             switch(priority)
             {
@@ -123,7 +129,7 @@ namespace TaskManager
                     Console.WriteLine($"Low importance added to: {tasks[taskKey]}");
                     break;
                 default:
-                    Console.WriteLine("Please type 'A' 'B' or 'C' then space at the beginning of your task.");
+                    Console.WriteLine("Please type 'pri # letter' using either a, b, or c.");
                     break;
             }
         }
@@ -144,6 +150,7 @@ namespace TaskManager
         private void ls(string[] searchTerms)
         {
             Dictionary<int, string> listToRead = tasks;
+
             if (searchTerms != null)
             {
                 foreach (string term in searchTerms)
@@ -163,9 +170,41 @@ namespace TaskManager
 
         private void readList(Dictionary<int, string> myList)
         {
-            foreach (var task in myList.OrderBy(key=> key.Value))
+            foreach (var task in myList.OrderBy(key => key.Value))
             {
-                Console.WriteLine($"{task.Key}: {task.Value}");
+                string[] taskToWrite = task.Value.Split(' ');
+                var defaultColor = ConsoleColor.Gray;
+
+                if (task.Value.Contains("[A]"))
+                {
+                    defaultColor = ConsoleColor.Yellow;
+                }
+                if (task.Value.Contains("[B]"))
+                {
+                    defaultColor = ConsoleColor.Green;
+                }
+                if (task.Value.Contains("[C]"))
+                {
+                    defaultColor = ConsoleColor.Cyan;
+                }
+                Console.ForegroundColor = defaultColor;
+
+                Console.Write(task.Key + ":");
+                for(int i = 0; i < taskToWrite.Length; i++)
+                {
+                    if(taskToWrite[i][0] == '+')
+                    {
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                    }
+                    if(taskToWrite[i][0] == '@')
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    }
+                    Console.Write(" " + taskToWrite[i]);
+                    Console.ForegroundColor = defaultColor;
+                }
+                Console.Write(Environment.NewLine);
+                Console.ResetColor();
             }
         }
     }

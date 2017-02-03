@@ -23,7 +23,10 @@ namespace TaskManager
         static void Greet(TaskList taskList)
         {
             Console.WriteLine("Hello, welcome to your task list.");
-            taskList.InitialList = System.IO.File.ReadLines(myPath);
+            if (System.IO.File.Exists(myPath))
+            {
+                taskList.InitialList = System.IO.File.ReadLines(myPath);
+            }
         }
 
         static void ListenForCommands(TaskList taskList)
@@ -36,7 +39,7 @@ namespace TaskManager
         {
             Console.WriteLine("See you next time.");
             System.IO.File.WriteAllText(myPath, taskList.FormattedList);
-            System.Threading.Thread.Sleep(1500);
+            System.Threading.Thread.Sleep(1200);
         }
     }
 }

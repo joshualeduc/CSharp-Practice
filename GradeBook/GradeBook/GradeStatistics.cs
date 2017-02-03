@@ -34,7 +34,7 @@ namespace Grades
                         result = "Below average";
                         break;
                     default:
-                        result = "Failingi";
+                        result = "Failing";
                         break;
                 }
                 return result;
